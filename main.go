@@ -20,6 +20,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	if len(args) > 4 {
+		total, err := addUpEverything(args[1:])
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+		fmt.Println(total)
+		return
+	}
+
 	num1, num2, op, err := parseArgs(args[1:])
 	if err != nil {
 		fmt.Println(err.Error())
@@ -121,4 +131,21 @@ func printHelp() {
 	fmt.Println("math 40+2        42")
 	fmt.Println("math 40 2        42 (note, without an operand, the program assumes addition)")
 	fmt.Println("math 44-2        42")
+}
+
+// addUpEverything will recursivly take in all args, convert them to floats
+// and add them all up
+func addUpEverything(numbers []string) (float64, error) {
+	start := 0.0
+	for _, n := range numbers {
+		f, err := strconv.ParseFloat(n, 64)
+		if err != nil {
+			return 0, err
+		}
+		start, err = doMath(start, f, "+")
+		if err != nil {
+			return 0, err
+		}
+	}
+	return start, nil
 }
